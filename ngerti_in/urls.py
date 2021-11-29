@@ -31,6 +31,7 @@ authpatterns=[
 
 urlpatterns = [
     path('', include('authapp.urls')),
+    path('', include('materi.urls')),
     path('auth/', include(authpatterns)),
     path('admin/', admin.site.urls),
     path('checkserver/', index, name='index'),
