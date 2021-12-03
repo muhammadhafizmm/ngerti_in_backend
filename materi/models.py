@@ -39,3 +39,15 @@ class Materi(models.Model):
     
     def __str__(self):
         return self.judul
+
+class Soal(models.Model):
+    materi = models.ForeignKey(Materi, on_delete=models.CASCADE, related_name='soal')
+    pertanyaan = models.TextField()
+    A = models.TextField(default="")
+    B = models.TextField(default="")
+    C = models.TextField(default="")
+    D = models.TextField(default="")
+    E = models.TextField(default="")
+    jawaban_benar = models.CharField(max_length=1)
+
+    

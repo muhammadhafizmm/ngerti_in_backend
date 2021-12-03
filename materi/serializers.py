@@ -2,7 +2,8 @@ from rest_framework import serializers
 from .models import (
     Mapel,
     Modul,
-    Materi
+    Materi,
+    Soal
 )
 
 class MateriSerializer(serializers.ModelSerializer):
@@ -20,3 +21,9 @@ class ModulSerializer(serializers.ModelSerializer):
     class Meta:
         model = Modul
         fields = '__all__'
+
+class SoalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Soal
+        fields = '__all__'
+        
