@@ -1,13 +1,15 @@
-from django.urls import path
-from django.urls.conf import include 
-from .views import MateriController, SoalController 
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-router = DefaultRouter()
-router.register('materi', MateriController, basename='materi')
-router.register('soal', SoalController, basename='soal')
+from materi import views as materi_views
+
+materi_router = DefaultRouter()
+materi_router.register(r"jurusan",materi_views.JurusanViewSet)
+materi_router.register(r"mapel",materi_views.MapelViewSet)
+materi_router.register('soal', materi_views.SoalController, basename='soal')
+
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('<int:pk>/', include(router.urls)),
+    path("", include(materi_router.urls)),
+    path('<int:pk>/', include(materi_router.urls))
 ]
