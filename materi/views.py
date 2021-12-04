@@ -1,4 +1,5 @@
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -36,7 +37,7 @@ class JurusanViewSet(viewsets.ModelViewSet):
         data = {"jurusan_data": serializer.data}
         data["related_mapel"] = [{"id": mapel.id, "mapel": mapel.name} for mapel in Mapel.objects.filter(jurusan=instance.id)]
         return Response(data)
-    
+
     def get_permissions(self):
         if self.action == "retrieve":
             permission_classes = [IsJurusan]
@@ -62,6 +63,22 @@ class MapelViewSet(viewsets.ModelViewSet):
                         "judul": materi.judul
                     } for materi in Materi.objects.filter(modul=modul.id)],
             } for modul in Modul.objects.filter(mapel=instance.id)]
+        return Response(data)
+    
+    @action(detail=True, methods=["get"])
+    def get_related_forum (self, request, pk=None):
+        instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.serializer_class(instance=instance)
+        data = {"mapel_data": serializer.data}
+        # data["related_post"] = [
+        #     {
+        #         "id": post.id, 
+        #         "topik": post.topik, 
+        #         "isi": post.isi, 
+        #         "waktu": post.waktu,
+        #         "pengirim": post.pengirim,
+        #         "child_post": post.child_post
+        #     } for post in Post.objects.filter(mata_pelajaran=instance.id)]
         return Response(data)
     
     def get_permissions(self):
