@@ -1,7 +1,14 @@
 from rest_framework import status, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from authapp.models import Jurusan
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+
+from .permissions import (
+    IsJurusan, 
+    IsMapelJurusan
+)
+
 from authapp.serializers import JurusanSerializer
 from .serializers import (
     MapelSerializer,
@@ -9,6 +16,8 @@ from .serializers import (
     SoalSerializer,
     HasilKuisSerializer
 )
+
+from authapp.models import Jurusan
 from .models import (
     Mapel,
     Modul,
@@ -30,6 +39,13 @@ class JurusanViewSet(viewsets.ModelViewSet):
         data["related_mapel"] = [{"id": mapel.id, "mapel": mapel.name} for mapel in Mapel.objects.filter(jurusan=instance.id)]
         return Response(data)
     
+    def get_permissions(self):
+        if self.action == "retrieve":
+            permission_classes = [IsJurusan]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
+    
 class MapelViewSet(viewsets.ModelViewSet):
     queryset = Mapel.objects.all()
     serializer_class = MapelSerializer
@@ -41,15 +57,21 @@ class MapelViewSet(viewsets.ModelViewSet):
         data["related_modul"] = [
             {
                 "id": modul.id, 
-                "mapel": modul.name,
+                "modul": modul.name,
                 "related_materi": [
                     {
                         "id": materi.id, 
                         "judul": materi.judul
                     } for materi in Materi.objects.filter(modul=modul.id)],
             } for modul in Modul.objects.filter(mapel=instance.id)]
-        self.data = data
         return Response(data)
+    
+    def get_permissions(self):
+        if self.action == "retrieve":
+            permission_classes = [IsMapelJurusan]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
 
 class MateriController(viewsets.ModelViewSet):
     queryset = Materi.objects.all()
