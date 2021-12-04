@@ -11,7 +11,6 @@ class MateriSerializer(serializers.ModelSerializer):
         model = Materi
         fields = '__all__'
 
-
 class MapelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mapel

@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions
 
-from .models import Student
-
 
 class DefaultPermission(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -38,15 +36,4 @@ class IsOwner(permissions.BasePermission):
 
         return False
 
-
-class IsStudent(permissions.BasePermission):
-    def has_permission(self, request, view):
-        user = request.user
-        if user.is_authenticated:
-            if user.role.name == "student":
-                return True
-        return False
-
-    def has_object_permission(self, request, view, obj):
-        return self.has_permission(request, view)
 

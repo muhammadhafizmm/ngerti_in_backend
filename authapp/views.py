@@ -63,13 +63,15 @@ class LoginView(APIView):
         def get_token(user):
             refresh = RefreshToken.for_user(user)
             return {
+                'access': str(refresh.access_token),
                 'refresh': str(refresh),
-                'access': str(refresh.access_token)
             }
         
         response = Response()
         response.data = get_token(user)
-        response.data.update({"message" : "success"})
+        student = Student.objects.filter(user_id=user.id)
+        serializer = StudentSerializer(student[0])
+        response.data.update({"student_detail": serializer.data})
         return response
 
 class RegisterView(APIView):
