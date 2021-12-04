@@ -85,13 +85,26 @@ class HasilKuisController(viewsets.ModelViewSet):
         hasil = get_object_or_404(self.queryset, pk=pk)
         serializer = self.serializer_class(hasil)
         data = {"hasil_data": serializer.data}
-        data['hasil_data']['jawaban'] = [soal.jawaban_benar for soal in Soal.objects.filter(materi=self.queryset[0].materi.id)]
+        real_ans = {}
+        for soal in Soal.objects.filter(materi=self.queryset[0].materi.id):
+            real_ans[soal.id] = soal.jawaban_benar
 
+        score = self.hitung_nilai(data['hasil_data']['answer'], real_ans)
+
+        data['hasil_data']['nilai'] = score
+        
         return Response(data)
 
-    # def hitung_nilai(self, jawaban):
-    #     answer = jawaban[0].answer
-    #     return(jawaban[0].materi.soal)
-    #     this_materi = Materi.objects.get(id = jawaban[0].materi.id)
-    #     print(serializer.data)
+    def hitung_nilai(self, answer, real_ans):
+        jumlah_soal = len(real_ans)
+        jumlah_dijawab = len(answer)
+        student_score = 0
+        if(jumlah_soal!=0 or jumlah_dijawab!=0):
+            for i in answer:
+                if(answer[i]==real_ans[int(i)]):
+                    student_score = student_score+1
+            
+            student_score = int((student_score/jumlah_soal)*100)
+
+        return student_score
 
