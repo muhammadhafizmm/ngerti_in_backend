@@ -35,4 +35,5 @@ urlpatterns = [
     path('auth/', include(authpatterns)),
     path('admin/', admin.site.urls),
     path('checkserver/', index, name='index'),
+    path('to/', include('tryout.urls')),
 ]
