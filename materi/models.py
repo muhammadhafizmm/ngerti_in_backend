@@ -1,7 +1,7 @@
 from django.db import models
 from authapp.models import (
     Jurusan,
-    
+    Student
 ) 
 
 # Create your models here.
@@ -41,13 +41,28 @@ class Materi(models.Model):
         return self.judul
 
 class Soal(models.Model):
-    materi = models.ForeignKey(Materi, on_delete=models.CASCADE, related_name='soal')
+    materi = models.ForeignKey(
+        Materi, 
+        on_delete=models.CASCADE, 
+        related_name='soal')
     pertanyaan = models.TextField()
-    A = models.TextField(default="")
-    B = models.TextField(default="")
-    C = models.TextField(default="")
-    D = models.TextField(default="")
-    E = models.TextField(default="")
+    jawaban = models.JSONField()
     jawaban_benar = models.CharField(max_length=1)
 
-    
+    def __str__(self):
+        return self.pertanyaan
+
+class HasilKuis(models.Model):
+    siswa = models.ForeignKey(
+        Student, 
+        on_delete=models.CASCADE, 
+        related_name='siswa')
+    materi = models.ForeignKey(
+        Materi, 
+        on_delete=models.CASCADE, 
+        related_name='hasilkuis')
+    answer = models.JSONField(default = dict)
+    nilai = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.siswa.user.username
