@@ -6,12 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.generics import get_object_or_404
 
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import AuthenticationFailed, InvalidToken, TokenError
-from rest_framework_simplejwt.views import TokenObtainPairView
-
-import csv
-import json
+import csv, json, time
 
 from .serializers import (
     TryOutSerializer
@@ -25,22 +20,28 @@ class TryOutViewSet(viewsets.ModelViewSet):
     queryset = TryOut.objects.all()
     serializer_class = TryOutSerializer
 
-    def csv_to_json(csvFilePath, jsonFilePath):
-        data = {}
-        with open(csvFilePath, encoding='utf-8') as csvf:
-            csvReader = csv.DictReader(csvf)
-            for rows in csvReader:
-                key = rows['No']
-                data[key] = rows
-        with open(jsonFilePath, 'w', encoding='utf-8') as jsonf:
-            jsonf.write(json.dumps(data, indent=4))
-        
-        csvFilePath = r'Names.csv'
-        jsonFilePath = r'Names.json'
-         
-
     def retrieve(self, request, pk = None):
         tryout = get_object_or_404(self.queryset, pk=pk)
         serializer = self.serializer_class(tryout)
-        print(serializer.data)
+        all_data = serializer.data
+        soal = all_data["file_soal"]
+        csvFilePath = soal[1:4] + ".csv"
+        jsonFilePath = "to_file.json"
+        data = []
+        with open(csvFilePath) as csvFile:
+            csvReader = csv.DictReader(csvFile)
+            for csvRow in csvReader:
+                data.append(csvRow)
 
+        with open(jsonFilePath, "w") as jsonFile:
+            jsonFile.write(json.dumps(data, indent=4))
+
+        durasi = all_data["durasi_pengerjaan"]
+        durasi_detik = durasi * 60
+        while durasi_detik :
+            mins, secs = divmod(durasi_detik, 60)
+            timer = '{:02d}:{:02d}'.format(mins, secs)
+            print(timer, end="\r")
+            time.sleep(1)
+            durasi_detik -= 1
+        return Response(serializer.data)
