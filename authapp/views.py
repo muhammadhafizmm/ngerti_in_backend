@@ -11,7 +11,7 @@ from rest_framework_simplejwt.exceptions import AuthenticationFailed, InvalidTok
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 
-from .models import Jurusan, User
+from .models import Jurusan, Pengajar, User
 from authapp.models import Student
 
 from .permissions import (
@@ -50,7 +50,6 @@ class LoginView(APIView):
                 data={"password": "This field is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         if get_user_model().objects.filter(username = request.data.get("username")).exists():
             user = get_user_model().objects.filter(username = request.data.get("username")).first()
         else :
@@ -58,18 +57,29 @@ class LoginView(APIView):
         
         
         if not user.check_password(request.data.get("password")):
+            print(user.check_password(request.data.get("password")))
             raise AuthenticationFailed("Incorrect password!")
         
         def get_token(user):
             refresh = RefreshToken.for_user(user)
             return {
+                'access': str(refresh.access_token),
                 'refresh': str(refresh),
-                'access': str(refresh.access_token)
             }
         
-        response = Response()
-        response.data = get_token(user)
-        response.data.update({"message" : "success"})
+        if Student.objects.filter(user_id=user.id).exists():
+            response = Response()
+            response.data = get_token(user)
+            student = Student.objects.filter(user_id=user.id)
+            serializer = StudentSerializer(student[0])
+            response.data.update({"student_detail": serializer.data})
+        else:
+            response = Response()
+            response.data = get_token(user)
+            pengajar = Pengajar.objects.filter(user_id=user.id)[0]
+            response.data.update({"pengajar_id": pengajar.id,
+                                  "isPengajar": True,
+                                  })
         return response
 
 class RegisterView(APIView):
@@ -83,14 +93,20 @@ class RegisterView(APIView):
             user = UserSerializer(data=request.data)
             if user.is_valid():
                 user.save()
-                request.data._mutable = True
+                # request.data._mutable = True
                 request.data.update({
                     "user" : user.data.get("id"),
+                    "is_premium": False
                     })
                 student = StudentSerializer(data=request.data)
                 if student.is_valid():
                     student.save()
                     return Response(data=student.data, status=status.HTTP_200_OK)
+                else:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            
         else:
             data = {
                 "username": "This fields is required",
