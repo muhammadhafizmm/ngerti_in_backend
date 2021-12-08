@@ -119,3 +119,4 @@ class JurusanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jurusan
         fields = '__all__'
+        
