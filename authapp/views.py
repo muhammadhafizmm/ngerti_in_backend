@@ -50,7 +50,6 @@ class LoginView(APIView):
                 data={"password": "This field is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         if get_user_model().objects.filter(username = request.data.get("username")).exists():
             user = get_user_model().objects.filter(username = request.data.get("username")).first()
         else :
@@ -58,6 +57,7 @@ class LoginView(APIView):
         
         
         if not user.check_password(request.data.get("password")):
+            print(user.check_password(request.data.get("password")))
             raise AuthenticationFailed("Incorrect password!")
         
         def get_token(user):
@@ -85,14 +85,20 @@ class RegisterView(APIView):
             user = UserSerializer(data=request.data)
             if user.is_valid():
                 user.save()
-                request.data._mutable = True
+                # request.data._mutable = True
                 request.data.update({
                     "user" : user.data.get("id"),
+                    "is_premium": False
                     })
                 student = StudentSerializer(data=request.data)
                 if student.is_valid():
                     student.save()
                     return Response(data=student.data, status=status.HTTP_200_OK)
+                else:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            
         else:
             data = {
                 "username": "This fields is required",
