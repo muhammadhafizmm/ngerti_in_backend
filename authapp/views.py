@@ -40,7 +40,6 @@ def user_data_list_action(request, queryset, serializer):
 
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
-        print("aha")
         if not bool(request.data.get("username", None)):
             return Response(
                 data={"username": "This field is required"},
@@ -100,7 +99,6 @@ class RegisterView(APIView):
                 "jurusan": "This fields is required and must be exists",
             }
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-        
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()

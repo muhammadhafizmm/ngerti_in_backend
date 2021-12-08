@@ -1,5 +1,9 @@
+
 from django.contrib.auth import get_user_model
+from django.db.models import fields
 from rest_framework import serializers
+
+from materi.models import Mapel
 from .models import (
     Jurusan, 
     Student, 
@@ -106,3 +110,11 @@ class StudentSerializer(serializers.ModelSerializer):
             "jurusan_data",
             "is_premium"
         ]
+
+class JurusanSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    name = serializers.CharField(required=False)
+
+    class Meta:
+        model = Jurusan
+        fields = '__all__'
