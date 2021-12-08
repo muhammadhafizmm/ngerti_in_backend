@@ -88,6 +88,8 @@ class MapelViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == "retrieve":
             permission_classes = [IsMapelJurusan]
+        elif self.action == "get_related_post":
+            permission_classes = []
         else:
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
