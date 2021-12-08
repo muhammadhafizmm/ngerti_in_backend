@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions
-
-from .models import Student
+from .models import Pengajar
 
 
 class DefaultPermission(permissions.BasePermission):
@@ -39,14 +38,10 @@ class IsOwner(permissions.BasePermission):
         return False
 
 
-class IsStudent(permissions.BasePermission):
+class isPengajar(permissions.BasePermission):
     def has_permission(self, request, view):
-        user = request.user
-        if user.is_authenticated:
-            if user.role.name == "student":
-                return True
-        return False
-
-    def has_object_permission(self, request, view, obj):
-        return self.has_permission(request, view)
-
+        user_id = request.data.get("user", None)
+        if Pengajar.objects.filter(user=user_id).exists():
+            return True
+        else:
+            return False
