@@ -11,7 +11,7 @@ from rest_framework_simplejwt.exceptions import AuthenticationFailed, InvalidTok
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 
-from .models import Jurusan, User
+from .models import Jurusan, Pengajar, User
 from authapp.models import Student
 
 from .permissions import (
@@ -67,11 +67,19 @@ class LoginView(APIView):
                 'refresh': str(refresh),
             }
         
-        response = Response()
-        response.data = get_token(user)
-        student = Student.objects.filter(user_id=user.id)
-        serializer = StudentSerializer(student[0])
-        response.data.update({"student_detail": serializer.data})
+        if Student.objects.filter(user_id=user.id).exists():
+            response = Response()
+            response.data = get_token(user)
+            student = Student.objects.filter(user_id=user.id)
+            serializer = StudentSerializer(student[0])
+            response.data.update({"student_detail": serializer.data})
+        else:
+            response = Response()
+            response.data = get_token(user)
+            pengajar = Pengajar.objects.filter(user_id=user.id)[0]
+            response.data.update({"pengajar_id": pengajar.id,
+                                  "isPengajar": True,
+                                  })
         return response
 
 class RegisterView(APIView):
