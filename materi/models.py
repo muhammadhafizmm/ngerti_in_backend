@@ -1,4 +1,5 @@
 from django.db import models
+
 from authapp.models import (
     Jurusan,
     Student
@@ -46,7 +47,7 @@ class Soal(models.Model):
         on_delete=models.CASCADE, 
         related_name='soal')
     pertanyaan = models.TextField()
-    jawaban = models.JSONField()
+    # jawaban = models.JSONField()
     jawaban_benar = models.CharField(max_length=1)
 
     def __str__(self):
@@ -61,7 +62,7 @@ class HasilKuis(models.Model):
         Materi, 
         on_delete=models.CASCADE, 
         related_name='hasilkuis')
-    answer = models.JSONField(default = dict)
+    # answer = models.JSONField(default=dict)
     nilai = models.IntegerField(default=0)
 
     def __str__(self):
