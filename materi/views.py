@@ -1,4 +1,6 @@
+from django.db.models import Q
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -18,6 +20,7 @@ from .models import (
     Materi,
     Soal
 ) 
+from forum.models import (Post)
 
 # Create your views here.
 # permission belom ya jangan lupa
@@ -52,6 +55,21 @@ class MapelViewSet(viewsets.ModelViewSet):
             } for modul in Modul.objects.filter(mapel=instance.id)]
         return Response(data)
     
+    @action(detail=True, methods=["get"])
+    def get_related_post (self, request, pk=None):
+        instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.serializer_class(instance=instance)
+        data = {"mapel_data": serializer.data}
+        data["related_post"] = [
+            {
+                "id": post.id, 
+                "topik": post.topik, 
+                "isi": post.isi, 
+                "waktu": post.waktu,
+                "pengirim": post.pengirim.username,
+                "child_post_len": Post.objects.filter(Q(mata_pelajaran=instance.id) & Q(parent_post=post.id)).count()
+            } for post in Post.objects.filter(Q(mata_pelajaran=instance.id) & Q(parent_post=None))]
+        return Response(data)
 
 
 

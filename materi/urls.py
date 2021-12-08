@@ -10,6 +10,5 @@ materi_router.register('soal', materi_views.SoalController, basename='soal')
 
 
 urlpatterns = [
-    path("", include(materi_router.urls)),
-    path('<int:pk>/', include(materi_router.urls))
+    path("", include(materi_router.urls))
 ]
