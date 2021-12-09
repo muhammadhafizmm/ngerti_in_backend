@@ -47,7 +47,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'authapp',
     'materi',
+<<<<<<< HEAD
+    'tryout',
+=======
     'forum',
+>>>>>>> 2982796f1a686c5e7cdc6fe6d8719030eda5453a
 ]
 
 MIDDLEWARE = [
