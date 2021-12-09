@@ -11,6 +11,5 @@ materi_router.register(r"soal",materi_views.SoalController)
 materi_router.register(r"hasil",materi_views.HasilKuisController)
 
 urlpatterns = [
-    path("", include(materi_router.urls)),
-    path('<int:pk>/', include(materi_router.urls))
+    path("", include(materi_router.urls))
 ]
