@@ -63,11 +63,11 @@ class StudentSerializer(serializers.ModelSerializer):
     # write only
     user = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(),
-        write_only=True,
+        write_only=True
     )
     jurusan = serializers.PrimaryKeyRelatedField(
         queryset=Jurusan.objects.all(),
-        write_only=True,
+        write_only=True
     )
     
     # read only
@@ -96,9 +96,10 @@ class StudentSerializer(serializers.ModelSerializer):
         }
         
     def get_jurusan_data(self, obj):
-        if obj.jurusan is None:
-            return "null"
-        return obj.jurusan.name
+        return {
+            "id" : obj.jurusan.id,
+            "username" : obj.jurusan.name,
+        }
     
     class Meta:
         model = Student
@@ -118,3 +119,4 @@ class JurusanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jurusan
         fields = '__all__'
+        

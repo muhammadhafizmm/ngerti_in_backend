@@ -1,16 +1,17 @@
 from rest_framework import serializers
 from .models import (
+    HasilKuis,
     Mapel,
     Modul,
     Materi,
-    Soal
+    Soal,
+    HasilKuis
 )
 
 class MateriSerializer(serializers.ModelSerializer):
     class Meta:
         model = Materi
         fields = '__all__'
-
 
 class MapelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,3 +28,8 @@ class SoalSerializer(serializers.ModelSerializer):
         model = Soal
         fields = '__all__'
         
+
+class HasilKuisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HasilKuis
+        fields = '__all__'

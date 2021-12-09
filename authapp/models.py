@@ -42,3 +42,11 @@ class Student(models.Model):
     
     def __str__(self):
         return self.user.username
+
+class Pengajar(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="pengajar",
+    )
+    ijazah = models.CharField(max_length=13, blank=True, default="")

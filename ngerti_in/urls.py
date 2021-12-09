@@ -32,7 +32,9 @@ authpatterns=[
 urlpatterns = [
     path('', include('authapp.urls')),
     path('belajar/', include('materi.urls')),
+    path('forum/', include('forum.urls')),
     path('auth/', include(authpatterns)),
     path('admin/', admin.site.urls),
     path('checkserver/', index, name='index'),
+    path('to/', include('tryout.urls')),
 ]
