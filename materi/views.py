@@ -93,7 +93,10 @@ class MateriController(viewsets.ModelViewSet):
             {
                 "id": soal.id, 
                 "pertanyaan": soal.pertanyaan,
-                "jawaban": soal.jawaban,
+                "A": soal.A,
+                "B": soal.B,
+                "C": soal.C,
+                "D": soal.D,
                 "jawaban_benar": soal.jawaban_benar
             } for soal in Soal.objects.filter(materi=materi.id)]
         return Response(data)

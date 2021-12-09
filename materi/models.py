@@ -47,7 +47,10 @@ class Soal(models.Model):
         on_delete=models.CASCADE, 
         related_name='soal')
     pertanyaan = models.TextField()
-    # jawaban = models.JSONField()
+    A = models.TextField(default="")
+    B = models.TextField(default="")
+    C = models.TextField(default="")
+    D = models.TextField(default="")
     jawaban_benar = models.CharField(max_length=1)
 
     def __str__(self):
